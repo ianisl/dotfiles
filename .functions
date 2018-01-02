@@ -1,0 +1,86 @@
+# cd to the path of the front Finder window
+function cdf() {
+    target=`osascript -e 'tell application "Path Finder" to set f to POSIX path of the target of the front finder window'`
+    if [ "$target" != "" ]; then
+        cd "$target"; pwd
+    else
+        echo 'No Path Finder window found' >&2
+    fi
+}
+
+# Open the path of the front Finder window as a directory in PhpStorm
+function phs() {
+    target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
+    if [ "$target" != "" ]; then
+        open -a /Applications/PhpStorm.app "$target";
+    else
+        echo 'No Finder window found' >&2
+    fi
+}
+
+# Open the path of the front Finder window as a directory in Sublime Text
+function sut() {
+    target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
+    if [ "$target" != "" ]; then
+        subl -a "$target";
+    else
+        echo 'No Finder window found' >&2
+    fi
+}
+
+# Open the path of the front Finder window as a directory in SourceTree
+function sot() {
+    target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
+    if [ "$target" != "" ]; then
+        open -a /Applications/SourceTree.app/ "$target";
+    else
+        echo 'No Finder window found' >&2
+    fi
+}
+
+# Upgrade node with nvm
+function update-node() {
+    # Update nvm
+    echo 'Updating nvm...'
+    (
+     cd "$NVM_DIR"
+     git fetch origin
+     git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
+    ) && . "$NVM_DIR/nvm.sh"
+    # Install last node version
+    echo 'Updating node...'
+    nvm install node
+}
+
+# Color-enabled cat with fallback for unrecognized format
+function color-cat() {
+    pygmentize -O style=solarized -f console256 "$1" 2> /dev/null || \cat "$1"
+}
+
+# Create tab in iTerm2
+function nt() {
+    osascript -e 'tell application "iTerm" to tell current window to create tab with default profile' 1> /dev/null
+}
+
+# Combine mkdir and cd
+function mcd() {
+    mkdir -p -- "$1" &&
+      cd -P -- "$1"
+}
+
+# Schedule sleep in X minutes, use like: sleep-in 60
+function sleep-in() {
+    local minutes=$1
+    local datetime=`date -v+${minutes}M +"%m/%d/%y %H:%M:%S"`
+    sudo pmset schedule sleep "$datetime"
+}
+
+# Cancel all scheduled sleeps
+function sleep-cancel-all() {
+    NUM_OF_SLEEPS=$(pmset -g sched | wc -l)
+    if [[ $NUM_OF_SLEEPS -gt 0 ]]; then
+        # The first line of output is a header, ignore it.
+        NUM_OF_SLEEPS=$(expr $NUM_OF_SLEEPS - 1)
+        seq $NUM_OF_SLEEPS | xargs -Iz sudo pmset schedule cancel 0
+    fi
+}

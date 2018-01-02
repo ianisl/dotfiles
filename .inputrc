@@ -1,0 +1,38 @@
+# Make Tab autocomplete regardless of filename case
+set completion-ignore-case on
+
+# List all matches in case multiple possible completions are possible
+set show-all-if-ambiguous on
+
+# Be more intelligent when autocompleting by also looking at the text after
+# the cursor. For example, when the current line is "cd ~/src/mozil", and
+# the cursor is on the "z", pressing Tab will not autocomplete it to "cd
+# ~/src/mozillail", but to "cd ~/src/mozilla". (This is supported by the
+# Readline used by Bash 4.)
+set skip-completed-text on
+
+# Set coloring for cd tab complete
+set colored-stats on
+
+# Enable vi mode + visual hints
+# Other options for hints (replace the number after \e[):
+# Ps = 0  -> blinking block.
+# Ps = 1  -> blinking block (default).
+# Ps = 2  -> steady block.
+# Ps = 3  -> blinking underline.
+# Ps = 4  -> steady underline.
+# Ps = 5  -> blinking bar (xterm).
+# Ps = 6  -> steady bar (xterm).
+set editing-mode vi
+set show-mode-in-prompt on
+set vi-ins-mode-string \1\e[6 q\2
+set vi-cmd-mode-string \1\e[2 q\2
+set keyseq-timeout 0 # disable delay with escape key
+
+# Vi mode remappings
+$if mode=vi
+    set keymap vi-command
+    "zz": clear-screen
+    set keymap vi-insert
+    "jj": vi-movement-mode # remap escape
+$endif

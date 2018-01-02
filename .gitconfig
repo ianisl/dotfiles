@@ -1,0 +1,33 @@
+[user]
+	name = Ianis Lallemand
+	email = ianis@ianislallemand.net
+[core]
+	excludesfile = /Users/lallemand/.gitignore_global
+[alias]
+	co = checkout
+	ci = commit
+	st = status
+	br = branch
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+    tracked = ls-tree --full-tree -r HEAD
+    ch = !git rev-parse --short HEAD | tr -d '\n' | pbcopy
+    cfh = !git rev-parse HEAD | tr -d '\n' | pbcopy
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[credential]
+	helper = osxkeychain
+[color]
+	ui = auto
+[color "status"]
+	added = blue 
+	changed = yellow 
+	untracked = white ul
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
+[commit]
+	template = /Users/lallemand/.stCommitMsg
