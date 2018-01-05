@@ -236,7 +236,9 @@ set background=dark
 " --------------------------
 " Set Solarized color scheme
 " --------------------------
-let g:solarized_termcolors=256
+let g:solarized_contrast="normal"
+" Use the terminal 16 colors (proper solarized values)
+let g:solarized_termcolors=16
 colorscheme solarized
 " ---------------------
 " Set editor background
