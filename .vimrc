@@ -18,6 +18,7 @@ Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'lilydjwg/colorizer'
+Plugin 'junegunn/goyo.vim'
 " TODO install
 " osyo-manga/vim-over
 call vundle#end() " Required
@@ -292,6 +293,21 @@ hi WildMenu ctermfg=244 ctermbg=234
 " Tabline (default)
 " -----------------
 set showtabline=0
+" -------------------
+" Writing mode (Goyo)
+" -------------------
+let g:goyo_width=70
+let g:goyo_height="100%"
+" Reload vimrc on Goyo leave to restore UI tweaks
+" Check if the function already exists to allow sourcing vimrc
+if !exists("*goyo_leave")
+    function! s:goyo_leave()
+        :source ~/.vimrc
+    endfunction
+endif
+augroup goyo_hooks
+    autocmd! User GoyoLeave nested call <SID>goyo_leave()
+augroup END
 
 " Key bindings {{{1
 " =================
