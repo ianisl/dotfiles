@@ -19,6 +19,7 @@ Plugin 'junegunn/fzf.vim'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'lilydjwg/colorizer'
 Plugin 'junegunn/goyo.vim'
+Plugin 'pangloss/vim-javascript'
 " TODO install
 " osyo-manga/vim-over
 call vundle#end() " Required
