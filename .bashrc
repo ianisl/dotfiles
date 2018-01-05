@@ -17,13 +17,17 @@ unset file;
 # No need to set -o vi as .bash_prompt is loaded before
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 # Use $$ as the trigger sequence instead of the default **
+# NB: when using the trigger sequence, fzf will use find and not the default_command defined below
 export FZF_COMPLETION_TRIGGER='$$'
 # Default options
-export FZF_DEFAULT_OPTS="-e"
+export FZF_DEFAULT_OPTS="-e --algo=v1"
 # Use ag as default command, respect .gitignore (ag default behavior)
-export FZF_DEFAULT_COMMAND='ag --silent --depth 10 --ignore .git -g ""' # Use --hidden to list hidden files
-# Apply the default command to CTRL-T as well
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# This is the command that will be used by the vim plugin
+export FZF_DEFAULT_COMMAND='ag --hidden --silent --depth 10 --ignore .git --ignore node_modules --ignore **.swp -g ""' # Use --hidden to list hidden files
+# Search for all files
+export FZF_CTRL_T_COMMAND='ag --hidden --silent --depth 10 --ignore .git --ignore node_modules --ignore **.swp -g ""'
+# Search only for folders
+export FZF_ALT_C_COMMAND='ag --silent --depth 10 --ignore .git --ignore node_modules --ignore Applications -g "" | sed -e "s:/[^/]*$::" | uniq'
 
 # nvm
 # ---
