@@ -8,6 +8,26 @@ function cdf() {
     fi
 }
 
+# Use fzf to recursively navigate folders
+# Press Enter to select folder
+# Currently selected folder is displayed at the bottom
+# Press Esc or Tab to exit in the selected folder
+function f() {
+    # find * -maxdepth 0 -type d -print 2> /dev/null \
+    dir=`{ find * -maxdepth 0 -type d -print 2> /dev/null; echo '..'; } \
+        | fzf-tmux --preview='echo $(basename "$PWD")' --preview-window=down:1 --bind "tab:abort"` \
+        && cd "$dir" \
+        && f
+    unset dir
+}
+
+# Browse z history with fzf
+function zz() {
+    [ $# -gt 0 ] && _z "$*" && return
+        cd "$(_z -l 2>&1 | fzf-tmux --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+        # cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+}
+
 # Open the path of the front Finder window as a directory in PhpStorm
 function phs() {
     target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`

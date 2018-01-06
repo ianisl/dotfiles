@@ -301,13 +301,13 @@ let g:goyo_width=70
 let g:goyo_height="100%"
 " Reload vimrc on Goyo leave to restore UI tweaks
 " Check if the function already exists to allow sourcing vimrc
-if !exists("*goyo_leave")
-    function! s:goyo_leave()
-        :source ~/.vimrc
+if !exists("*GoyoLeave")
+    function! GoyoLeave()
+        source ~/.dotfiles/.vimrc
     endfunction
 endif
-augroup goyo_hooks
-    autocmd! User GoyoLeave nested call <SID>goyo_leave()
+augroup goyo_leave
+    autocmd! User GoyoLeave nested call GoyoLeave()
 augroup END
 
 " Key bindings {{{1
@@ -379,11 +379,7 @@ inoremap È <Esc>:m .-2<CR>==gi
 vnoremap Ï :m '>+1<CR>gv=gv
 vnoremap È :m '<-2<CR>gv=gv
 " -------------------------------------------
-" Visual shifting (does not exit Visual mode)
-" -------------------------------------------
-vnoremap < <gv
-vnoremap > >gv
-" --------------------------------------
+
 " Go back to beginning of first non-char
 " --------------------------------------
 noremap à ^
