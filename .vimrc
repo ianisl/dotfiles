@@ -20,6 +20,7 @@ Plugin 'jiangmiao/auto-pairs'
 Plugin 'lilydjwg/colorizer'
 Plugin 'junegunn/goyo.vim'
 Plugin 'pangloss/vim-javascript'
+Plugin 'tpope/vim-repeat'
 " TODO install
 " osyo-manga/vim-over
 call vundle#end() " Required

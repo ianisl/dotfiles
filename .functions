@@ -13,12 +13,18 @@ function cdf() {
 # Currently selected folder is displayed at the bottom
 # Press Esc or Tab to exit in the selected folder
 function f() {
-    # find * -maxdepth 0 -type d -print 2> /dev/null \
     dir=`{ find * -maxdepth 0 -type d -print 2> /dev/null; echo '..'; } \
-        | fzf-tmux --preview='echo $(basename "$PWD")' --preview-window=down:1 --bind "tab:abort"` \
+        | fzf --header="›$(basename "$PWD")" --preview="ls {}" --bind "tab:abort"` \
         && cd "$dir" \
         && f
     unset dir
+}
+
+# Recursively copy a folder and its contents
+function cpr() {
+    dir=$(basename "$1")
+    mkdir "$dir"
+    cp -r "$1" "$dir"
 }
 
 # Browse z history with fzf

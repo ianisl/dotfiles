@@ -20,7 +20,7 @@ unset file;
 # NB: when using the trigger sequence, fzf will use find and not the default_command defined below
 export FZF_COMPLETION_TRIGGER='$$'
 # Default options
-export FZF_DEFAULT_OPTS="-e --algo=v1"
+export FZF_DEFAULT_OPTS="--algo=v1"
 # Use ag as default command, respect .gitignore (ag default behavior)
 # This is the command that will be used by the vim plugin
 export FZF_DEFAULT_COMMAND='ag --hidden --silent --depth 10 --ignore .git --ignore node_modules --ignore **.swp -g ""' # Use --hidden to list hidden files
