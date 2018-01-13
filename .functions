@@ -14,7 +14,7 @@ function cdf() {
 # Press Esc or Tab to exit in the selected folder
 function f() {
     dir=`{ find * -maxdepth 0 -type d -print 2> /dev/null; echo '..'; } \
-        | fzf --header="›$(basename "$PWD")" --preview="ls {}" --bind "tab:abort"` \
+        | fzf --header="›$(basename "$PWD")" --ansi --preview="echo \"›$(basename "$PWD")\"; CLICOLOR_FORCE=1 ls -1apG . | grep -v / | sed 's/^/  /'" --preview-window=down --bind "tab:abort" --bind "ctrl-p:preview-up" --bind "ctrl-n:preview-down"` \
         && cd "$dir" \
         && f
     unset dir
