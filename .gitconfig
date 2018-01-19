@@ -6,6 +6,7 @@
 [alias]
 	co = checkout
 	ci = commit
+    ca = commit -a -m
 	st = status
 	br = branch
 	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
@@ -14,7 +15,7 @@
     cfh = !git rev-parse HEAD | tr -d '\n' | pbcopy
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
 [mergetool "sourcetree"]
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
@@ -23,8 +24,8 @@
 [color]
 	ui = auto
 [color "status"]
-	added = blue 
-	changed = yellow 
+	added = blue
+	changed = yellow
 	untracked = white ul
 [filter "media"]
 	clean = git-media-clean %f

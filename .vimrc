@@ -23,6 +23,7 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'tpope/vim-repeat'
 " TODO install
 " osyo-manga/vim-over
+" wincent/replay
 call vundle#end() " Required
 filetype plugin indent on " Required
 
@@ -380,7 +381,6 @@ inoremap È <Esc>:m .-2<CR>==gi
 vnoremap Ï :m '>+1<CR>gv=gv
 vnoremap È :m '<-2<CR>gv=gv
 " -------------------------------------------
-
 " Go back to beginning of first non-char
 " --------------------------------------
 noremap à ^
@@ -408,7 +408,11 @@ nmap # <Plug>(anzu-sharp)
 " -----------------------------------------
 " Switch between vim windows and tmux panes
 " -----------------------------------------
-noremap <silent> é :call <SID>GoToNextWindowOrTmuxPane()<CR>
+nnoremap <silent> é :call <SID>GoToNextWindowOrTmuxPane()<CR>
+" ------------------------------------------
+" Reveal the current file's folder in Finder
+" ------------------------------------------
+noremap <c-@> :!open $(dirname %)<CR><CR>
 
 " Build systems {{{1
 " ==================

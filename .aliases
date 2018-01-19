@@ -21,3 +21,10 @@ alias ls='ls -AFG'
 alias cat='color-cat'
 
 alias o='open .'
+
+# Open ranger
+alias r='ranger'
+
+# Open ranger in 'stay in last visited dir' mode
+alias rs='ranger --choosedir=$HOME/rangerdir; LASTDIR=`cat $HOME/rangerdir`; cd "$LASTDIR"'
+

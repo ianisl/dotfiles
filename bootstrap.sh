@@ -31,4 +31,4 @@ else
 fi
 unset doIt
 
-cd $prev
+cd "$prev"

@@ -14,17 +14,10 @@ function cdf() {
 # Press Esc or Tab to exit in the selected folder
 function f() {
     dir=`{ find * -maxdepth 0 -type d -print 2> /dev/null; echo '..'; } \
-        | fzf --header="›$(basename "$PWD")" --ansi --preview="echo \"›$(basename "$PWD")\"; CLICOLOR_FORCE=1 ls -1apG . | grep -v / | sed 's/^/  /'" --preview-window=down --bind "tab:abort" --bind "ctrl-p:preview-up" --bind "ctrl-n:preview-down"` \
+        | fzf --ansi --preview="echo \"›$(basename "$PWD")\"; CLICOLOR_FORCE=1 ls -1apG . | grep -v / | sed 's/^/  /'" --preview-window=down --bind "tab:abort" --bind "ctrl-p:preview-up" --bind "ctrl-n:preview-down"` \
         && cd "$dir" \
         && f
     unset dir
-}
-
-# Recursively copy a folder and its contents
-function cpr() {
-    dir=$(basename "$1")
-    mkdir "$dir"
-    cp -r "$1" "$dir"
 }
 
 # Browse z history with fzf
@@ -32,6 +25,16 @@ function zz() {
     [ $# -gt 0 ] && _z "$*" && return
         cd "$(_z -l 2>&1 | fzf-tmux --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
         # cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+}
+
+# Copy the current directory's name
+function cdn() {
+    echo -n $(basename "$PWD") | pbcopy
+}
+
+# Copy the current directory's path
+function cdp() {
+    echo -n "$PWD" | pbcopy
 }
 
 # Open the path of the front Finder window as a directory in PhpStorm
