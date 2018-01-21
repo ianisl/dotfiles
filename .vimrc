@@ -147,9 +147,11 @@ let g:AutoPairsShortcutBackInsert = ''
 " --------------------
 " Snippets (UltiSnips)
 " --------------------
-" Location of custom snippets
-let g:UltiSnipsSnippetsDir = "~/.vim/ultisnips/custom"
+" Location of custom snippets edition
+" Warning: this is just for editing when calling the UltiSnipsEdit command: snippets need to be synced to the folders defined below, within ~/.vim, to be recognized
+let g:UltiSnipsSnippetsDir = "~/.dotfiles/.vim/ultisnips/custom"
 " Search path for all snippets (including custom ones)
+" Warning: those paths are relative to ~/.vim (there seem to be no way to set up ultisnips properly while using another path, eg the ~/.dotfiles/.vim folder)
 let g:UltiSnipsSnippetDirectories = ["ultisnips/vendor", "ultisnips/custom"]
 let g:UltiSnipsEditSplit = "vertical"
 " Use c-e as an expand trigger. While inside the YouCompleteMe menu, tab and s-tab will cycle through the autocompletion options and available snippets. After expanding a snippet, tab and s-tab will cycle through the snippet's placeholders.
@@ -306,6 +308,7 @@ let g:goyo_height="100%"
 if !exists("*GoyoLeave")
     function! GoyoLeave()
         source ~/.dotfiles/.vimrc
+        quit
     endfunction
 endif
 augroup goyo_leave
@@ -427,4 +430,5 @@ augroup END
 augroup custom_filetypes
     autocmd!
     autocmd BufNewFile,BufRead *.pde set ft=java
+    autocmd BufNewFile,BufRead *.md Goyo
 augroup END
