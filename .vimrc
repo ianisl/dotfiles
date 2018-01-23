@@ -21,6 +21,7 @@ Plugin 'lilydjwg/colorizer'
 Plugin 'junegunn/goyo.vim'
 Plugin 'pangloss/vim-javascript'
 Plugin 'tpope/vim-repeat'
+Plugin 'joshdick/onedark.vim'
 " TODO install
 " osyo-manga/vim-over
 " wincent/replay
@@ -242,15 +243,19 @@ set background=dark
 " --------------------------
 " Set Solarized color scheme
 " --------------------------
-let g:solarized_contrast="normal"
-" Use the terminal 16 colors (proper solarized values)
-let g:solarized_termcolors=16
-colorscheme solarized
+" let g:solarized_termcolors=16
+" colorscheme solarized
+" --------------------------
+" Set Onedark color scheme
+" --------------------------
+let g:onedark_termcolors=256
+colorscheme onedark
 " ---------------------
 " Set editor background
 " ---------------------
-hi Normal ctermbg=233
-hi NonText ctermbg=233
+" needed to remove the ~ at the end of Vim's buffer
+hi Normal ctermbg=235
+hi NonText ctermbg=235
 " ---------------------------
 " Hide ~ at the end of buffer
 " ---------------------------

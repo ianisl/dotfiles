@@ -20,6 +20,8 @@ URxvt.imLocale: fr_FR.UTF-8
 ! Setting the font pixelsize to non-whole units may give better antialiasing results
 /* URxvt.font: xft:Inconsolata for Powerline:style=BoldForPowerline:pixelsize=19 */
 URxvt.font: xft:Inconsolata\\-g for Powerline:pixelsize=14.5:Bold
+/* URxvt.font: xft:Hack:pixelsize=14.5:Bold:Italic */
+/* URxvt.italicFont: xft:Hack:pixelsize=14.5:Bold:Italic */
 ! -----------------------
 ! Font rendering settings
 ! -----------------------
@@ -33,49 +35,56 @@ Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
 URxvt.letterSpace: 0
 URxvt.lineSpace: 0
-
 ! UI {{{1
 ! =======
 ! -------
 ! Padding
 ! -------
 URxvt.internalBorder: 5
-! ---------------------
-! Background/foreground
-! ---------------------
-URxvt.background: 0
-URxvt.foreground: #888888
-! ------
-! Cursor
-! ------
-URxvt.cursorColor: #888888
-! -----------------
-! Color definitions
-! -----------------
-! black dark/light
-*color0: #121212
-*color8: #002b36
-! red dark/light
-*color1: #dc322f
-*color9: #cb4b16
-! green dark/light
-*color2: #859900
-*color10: #586e75
-! yellow dark/light
-*color3: #b58900
-*color11: #657b83
-! blue dark/light
-*color4: #268bd2
-*color12: #839496
-! magenta dark/light
-*color5: #d33682
-*color13: #6c71c4
-! cyan dark/light
-*color6: #2aa198
-*color14: #93a1a1
-! white dark/light
-*color7: #eee8d5
-*color15: #fdf6e3
+! ------------
+! Color scheme
+! ------------
+! Base16 OneDark
+! Adapted from Lalit Magant (http://github.com/tilal6991)
+#define base00 #262626
+#define base01 #353b45
+#define base02 #3e4451
+#define base03 #545862
+#define base04 #565c64
+#define base05 #abb2bf
+#define base06 #b6bdca
+#define base07 #c8ccd4
+#define base08 #e06c75
+#define base09 #d19a66
+#define base0A #e5c07b
+#define base0B #98c379
+#define base0C #56b6c2
+#define base0D #61afef
+#define base0E #c678dd
+#define base0F #be5046
+*.foreground:   base05
+#ifdef background_opacity
+*.background:   [background_opacity]base00
+#else
+*.background:   base00
+#endif
+*.cursorColor:  base05
+*.color0:       base00
+*.color1:       base08
+*.color2:       base0B
+*.color3:       base0A
+*.color4:       base0D
+*.color5:       base0E
+*.color6:       base0C
+*.color7:       base05
+*.color8:       base03
+*.color9:       base08
+*.color10:      base0B
+*.color11:      base0A
+*.color12:      base0D
+*.color13:      base0E
+*.color14:      base0C
+*.color15:      base07
 
 ! Key bindings {{{1
 ! =================
