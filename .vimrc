@@ -149,7 +149,7 @@ let g:AutoPairsShortcutBackInsert = ''
 " Snippets (UltiSnips)
 " --------------------
 " Location of custom snippets edition
-" Warning: this is just for editing when calling the UltiSnipsEdit command: snippets need to be synced to the folders defined below, within ~/.vim, to be recognized
+" Warning: this is just to indicate which file should be edited when calling the UltiSnipsEdit command. The folder defined here may differ from the actual 'custom snippet' folder read by Ultisnips (defined below)
 let g:UltiSnipsSnippetsDir = "~/.dotfiles/.vim/ultisnips/custom"
 " Search path for all snippets (including custom ones)
 " Warning: those paths are relative to ~/.vim (there seem to be no way to set up ultisnips properly while using another path, eg the ~/.dotfiles/.vim folder)
@@ -287,8 +287,8 @@ let g:anzu_status_format='%i/%l'
 " -------------------
 " Autocompletion menu
 " -------------------
-hi Pmenu ctermfg=234 ctermbg=245
-hi PmenuSel ctermfg=244 ctermbg=234
+hi Pmenu ctermfg=245 ctermbg=235
+hi PmenuSel ctermfg=234 ctermbg=244
 " --------------------
 " Statusline (default)
 " --------------------
@@ -421,6 +421,11 @@ nnoremap <silent> é :call <SID>GoToNextWindowOrTmuxPane()<CR>
 " Reveal the current file's folder in Finder
 " ------------------------------------------
 noremap <c-@> :!open $(dirname %)<CR><CR>
+" ----------------
+" Prev/Next search
+" ----------------
+noremap ) #
+noremap - *
 
 " Build systems {{{1
 " ==================

@@ -113,3 +113,7 @@ function sleep-cancel-all() {
         seq $NUM_OF_SLEEPS | xargs -Iz sudo pmset schedule cancel 0
     fi
 }
+# Sync local dotfiles with the .dotfile folder
+function syncdot() {
+    . ~/.dotfiles/bootstrap.sh $1
+}
