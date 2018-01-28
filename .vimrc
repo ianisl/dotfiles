@@ -202,10 +202,16 @@ endfunction
 " ----------------------------------------------------
 " Switch seamlessly between vim windows and tmux panes
 " ----------------------------------------------------
+" Except when Tmux is zoomed. In this case, stay within Vim
 function! <SID>GoToNextWindowOrTmuxPane()
     if winnr() == winnr('$')
+        " In all cases, go back to the first Vim split
         execute "normal \<c-w>\<c-t>"
-        silent call system('tmux select-pane -t :.+')
+        let g:isTmuxZoomed = system('if tmux list-panes -F "#F" | grep -q Z; then echo 1; else echo 0; fi')
+        if g:isTmuxZoomed == 0
+            " If Tmux is not zoomed, select next pane
+            silent call system('tmux select-pane -t :.+')
+        endif
     else
         execute "normal \<c-w>\<c-w>"
     endif
