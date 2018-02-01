@@ -101,6 +101,7 @@ set hidden
 " Auto-monitor file changes
 " -------------------------
 set autoread
+au CursorHold,CursorHoldI * checktime
 " -------------------------------------
 " Fix potential problems with backspace
 " -------------------------------------
@@ -265,7 +266,7 @@ hi NonText ctermbg=235
 " ---------------------------
 " Hide ~ at the end of buffer
 " ---------------------------
-hi EndOfBuffer ctermfg=233
+hi EndOfBuffer ctermfg=235
 " ---------------
 " Warning message
 " ---------------

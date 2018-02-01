@@ -6,8 +6,6 @@
 prev=$PWD
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-git pull origin master
-
 function doIt() {
     rsync --exclude ".git/" \
         --exclude ".DS_Store" \
