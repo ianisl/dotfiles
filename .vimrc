@@ -19,7 +19,10 @@ Plugin 'junegunn/fzf.vim'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'lilydjwg/colorizer'
 Plugin 'junegunn/goyo.vim'
-Plugin 'pangloss/vim-javascript'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'tacahiroy/ctrlp-funky'
+" TODO super slow on HTML due to the jsClassDefinition syntax rule
+" Plugin 'pangloss/vim-javascript'
 Plugin 'tpope/vim-repeat'
 Plugin 'joshdick/onedark.vim'
 " TODO install
@@ -59,6 +62,10 @@ set history=1000
 " -------------------------
 set relativenumber
 set number
+" ------------------------------
+" Allow displaying partial lines
+" ------------------------------
+set display=lastline
 " ------
 " Search
 " ------
@@ -69,6 +76,11 @@ set incsearch
 " Delete comment character when joining commented lines
 " -----------------------------------------------------
 set formatoptions+=j
+" Custom comment formatting
+augroup custom_comment_formatting
+    autocmd!
+    autocmd FileType markdown setlocal commentstring=<!--\ %s\ -->
+augroup END
 " ----------------------
 " Location of new splits
 " ----------------------
@@ -165,6 +177,14 @@ augroup custom_ultisnips_filetypes
     autocmd!
     autocmd FileType php UltiSnipsAddFiletypes html
 augroup END
+" ------------
+" CtrlP prompt
+" ------------
+let g:ctrlp_prompt_mappings = {
+    \ 'PrtSelectMove("j")':   ['j', '<down>'],
+    \ 'PrtSelectMove("k")':   ['k', '<up>'],
+    \ }
+let g:ctrlp_match_window = 'order:ttb,min:1,max:12,results:0'
 
 " Functions {{{1
 " ==============
@@ -404,6 +424,10 @@ noremap à ^
 " --------------
 noremap zd :Buffers<CR>
 noremap ze :Files<CR>
+" ----------
+" CtrlPFunky
+" ----------
+noremap zf :CtrlPFunky<CR>
 " ------------------------
 " Clear anzu search status
 " ------------------------

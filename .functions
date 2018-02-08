@@ -117,3 +117,13 @@ function sleep-cancel-all() {
 function syncdot() {
     . ~/.dotfiles/bootstrap.sh $1
 }
+
+# Shortcur to macOS' open function
+function o() {
+    if [ -z ${1+x} ]; then
+        # See https://stackoverflow.com/questions/7131670/make-a-bash-alias-that-takes-a-parameter
+        open .
+    else
+        open $1
+    fi
+}
