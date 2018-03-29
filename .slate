@@ -1,0 +1,5 @@
+config defaultToCurrentScreen true
+config nudgePercentOf screenSize
+config resizePercentOf screenSize
+
+bind right:ctrl move screenOriginX+screenSizeX/2+20;screenOriginY+19 screenSizeX/2-40;screenSizeY-40

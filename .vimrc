@@ -7,7 +7,6 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim' " Required
-Plugin 'altercation/vim-colors-solarized'
 Plugin 'tpope/vim-surround'
 Plugin 'SirVer/ultisnips'
 Bundle 'ervandew/supertab'
@@ -17,17 +16,16 @@ Plugin 'Valloric/YouCompleteMe'
 Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
 Plugin 'jiangmiao/auto-pairs'
-Plugin 'lilydjwg/colorizer'
 Plugin 'junegunn/goyo.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tacahiroy/ctrlp-funky'
-" TODO super slow on HTML due to the jsClassDefinition syntax rule
-" Plugin 'pangloss/vim-javascript'
+Plugin 'tikhomirov/vim-glsl'
 Plugin 'tpope/vim-repeat'
 Plugin 'joshdick/onedark.vim'
 " TODO install
 " osyo-manga/vim-over
 " wincent/replay
+" w0rp/ale
 call vundle#end() " Required
 filetype plugin indent on " Required
 
@@ -45,6 +43,10 @@ syntax on
 " Set lazy redraw
 " ---------------
 set lazyredraw
+" ------------------------
+" Always add - to keywords
+" ------------------------
+set iskeyword+=-
 " --------------------
 " Set default encoding
 " --------------------
@@ -169,14 +171,14 @@ let g:UltiSnipsSnippetsDir = "~/.dotfiles/.vim/ultisnips/custom"
 let g:UltiSnipsSnippetDirectories = ["ultisnips/vendor", "ultisnips/custom"]
 let g:UltiSnipsEditSplit = "vertical"
 " Use c-e as an expand trigger. While inside the YouCompleteMe menu, tab and s-tab will cycle through the autocompletion options and available snippets. After expanding a snippet, tab and s-tab will cycle through the snippet's placeholders.
-let g:UltiSnipsExpandTrigger = "<c-e>"
+let g:UltiSnipsExpandTrigger = "<c-j>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-" Custom filetypes for UltiSnips
-augroup custom_ultisnips_filetypes
-    autocmd!
-    autocmd FileType php UltiSnipsAddFiletypes html
-augroup END
+" " Custom filetypes for UltiSnips
+" augroup custom_ultisnips_filetypes
+"     autocmd!
+"     autocmd FileType php UltiSnipsAddFiletypes html
+" augroup END
 " ------------
 " CtrlP prompt
 " ------------
@@ -185,6 +187,46 @@ let g:ctrlp_prompt_mappings = {
     \ 'PrtSelectMove("k")':   ['k', '<up>'],
     \ }
 let g:ctrlp_match_window = 'order:ttb,min:1,max:12,results:0'
+" -------------------
+" Writing mode (Goyo)
+" -------------------
+let g:goyo_width=70
+let g:goyo_height="100%"
+" Callbacks allowing to avoid quitting twice to effectively close Vim when in Goyo mode
+function! g:GoyoBefore()
+    " Fix some UI tweaks
+    hi Normal ctermbg=235
+    hi NonText ctermbg=235
+    " Prepare the quitting fix
+    let b:quitting = 0
+    let b:quitting_bang = 0
+    autocmd QuitPre <buffer> let b:quitting = 1
+    cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
+endfunction
+function! g:GoyoAfter()
+    " Quit Vim if this is the only remaining buffer
+    " TODO necessary to reload vimrc here ? Doesn't seem so
+    if b:quitting && len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1
+        if b:quitting_bang
+            qa!
+        else
+            qa
+        endif
+    endif
+endfunction
+let g:goyo_callbacks = [function('g:GoyoBefore'), function('g:GoyoAfter')]
+" ---
+" fzf
+" ---
+" Split mappings
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-s': 'split',
+  \ 'ctrl-x': 'vsplit' }
+" Accept with , in commands
+command! -bar -bang -nargs=? -complete=buffer Buffers call fzf#vim#buffers(<q-args>, {'options': '--bind ",:accept"'}, <bang>0)
+command! -bang -nargs=? -complete=dir Files call fzf#vim#files(<q-args>, {'options': '--bind ",:accept"'}, <bang>0)
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--bind ",:accept"'}, <bang>0)
 
 " Functions {{{1
 " ==============
@@ -330,22 +372,6 @@ hi WildMenu ctermfg=244 ctermbg=234
 " Tabline (default)
 " -----------------
 set showtabline=0
-" -------------------
-" Writing mode (Goyo)
-" -------------------
-let g:goyo_width=70
-let g:goyo_height="100%"
-" Reload vimrc on Goyo leave to restore UI tweaks
-" Check if the function already exists to allow sourcing vimrc
-if !exists("*GoyoLeave")
-    function! GoyoLeave()
-        source ~/.dotfiles/.vimrc
-        quit
-    endfunction
-endif
-augroup goyo_leave
-    autocmd! User GoyoLeave nested call GoyoLeave()
-augroup END
 
 " Key bindings {{{1
 " =================
@@ -364,6 +390,14 @@ noremap <silent> <expr> dd (v:count > 0 ? ":<c-u>exe ':d<c-r>=v:count + 1<CR>'<C
 " -----------------------------
 noremap <Left> <c-x>
 noremap <Right> <c-a>
+" ----------------------------
+" Easier use of backtick marks
+" ----------------------------
+noremap ' `
+" ---------------------------------
+" Enter with , in command-line mode
+" ---------------------------------
+cnoremap , <CR>
 " ------------------
 " Easier command key
 " ------------------
@@ -383,10 +417,6 @@ noremap ? ,
 " More consistent redo
 " --------------------
 noremap U <c-r>
-" ---------------------
-" Switch between splits
-" ---------------------
-" noremap é <c-w>w
 " ---------
 " jj to Esc
 " ---------
@@ -428,10 +458,6 @@ noremap ze :Files<CR>
 " CtrlPFunky
 " ----------
 noremap zf :CtrlPFunky<CR>
-" ------------------------
-" Clear anzu search status
-" ------------------------
-" nmap <Esc><Esc> <Plug>(anzu-clear-search-status)
 " ---------------------------
 " TODO temp disable space key
 " ---------------------------
@@ -466,10 +492,11 @@ augroup custom_build_systems
     autocmd BufNewFile,BufRead *.pde nnoremap zb :Shell gulp start-processing<CR>
 augroup END
 
-" File types {{{1
-" ==============
-augroup custom_filetypes
+" Filetype actions {{{1
+" =====================
+augroup custom_filetype_actions
     autocmd!
     autocmd BufNewFile,BufRead *.pde set ft=java
+    autocmd BufNewFile,BufRead *.php set ft=html.php
     autocmd BufNewFile,BufRead *.md Goyo
 augroup END

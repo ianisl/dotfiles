@@ -127,3 +127,19 @@ function o() {
         open $1
     fi
 }
+
+# Compute the block size when executing a tmux command outside tmux and store it in an environment variable for retrieval within tmux. Allows modified Kitty's icat routine to compute the terminal's width in pixels. This hack is needed because TIOCGWINSZ returns a width of 0 px in tmux, which breaks the way icat works (see: https://github.com/kovidgoyal/kitty/issues/413). Usage: after each change of the terminal's window size or font size within tmux, the environment variable can be updated by detaching and reattaching to the session, for instance.
+# TODO disabled as icat is not working in tmux even with this hack
+# function tmux() {
+#     tmp=/tmp/kitty-screensize-output
+#     if [ "$TERM" = "xterm-kitty" ] && ! [ -n "$TMUX" ]; then
+#         # If we're using kitty and we're outside tmux, recompute the CELL_WIDTH_PX environment variable and forward the args to the real tmux command
+#         # Use Kitty's method to retrieve the terminal width and write it into a temp file (this kitty -c command can't be used into a shell subcommand)
+#         kitty -c "from kitty.icat import *; s = screen_size(); print(s.rows, s.cols, s.width, s.height, sep='\n', file=open('$tmp', 'w'))"
+#         # cols=$(sed '2q;d' $tmp)
+#         # width=$(sed '3q;d' $tmp)
+#     fi
+#     unset tmp
+#     # forward the args to the 'real' tmux command
+#     /usr/local/bin/tmux "$@"
+# }
