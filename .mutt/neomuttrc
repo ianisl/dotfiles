@@ -1,0 +1,323 @@
+# vim: foldmethod=marker
+
+# Settings {{{1
+# =============
+# ------------------------------------------
+# Load passwords and SMTP configuration info
+# ------------------------------------------
+# Content format:
+# # Gmail
+# set my_gmail_from = ""
+# set my_gmail_user = ""
+# set my_gmail_pass = ""
+# set my_gmail_smtp = ""
+# # Personal mail server
+# set my_personal_from = ""
+# set my_personal_user = ""
+# set my_personal_pass = ""
+# set my_personal_smtp = ""
+# # Ensad
+# set my_ensad_from = ""
+# set my_ensad_user = ""
+# set my_ensad_pass = ""
+# set my_ensad_smtp = ""
+source "gpg -d ~/.mutt/passwords.gpg 2> /dev/null |"
+# -----------
+# Author info
+# -----------
+set realname = "Ianis Lallemand"
+# ------------------
+# Imap configuration
+# ------------------
+# Don't forget to turn on IMAP in Gmail account
+set imap_user = "ianis.lallemand@gmail.com"
+set imap_pass = $my_gmail_pass
+# -----------------------------------
+# Default SMTP and from configuration
+# -----------------------------------
+# set smtp_url = "smtps://$my_gmail_user@smtp.gmail.com:465/"
+# set smtp_pass = $my_gmail_pass
+set smtp_authenticators = "gssapi:login"
+set from = $my_gmail_from
+set status_format = $my_gmail_from
+set smtp_url = "smtps://$my_gmail_user@$my_gmail_smtp/"
+set smtp_pass = $my_gmail_pass
+# -------------------------
+# Alternate email addresses
+# -------------------------
+alternates ianis.lallemand@ensad.fr ianis@ianislallemand.com ianis@ianislallemand.net
+# --------------------------
+# Gmail folder configuration
+# --------------------------
+# Where to find mail (define this before adding mailboxes)
+set folder = "imaps://imap.gmail.com:993/"
+# Add Gmail mailboxes
+# https://unix.stackexchange.com/questions/223469/can-i-automatically-send-from-specific-email-addresses-in-mutt
+# reply_with_xorig ?
+# reverse_name
+# reverse_realname
+# TODO add calls
+mailboxes +INBOX +[Gmail]/Suivis +[Gmail]/Tous\ les\ messages +[Gmail]/Messages\ envoyés +[Gmail]/Brouillons +[Gmail]/Spam +[Gmail]/Corbeille +Calls
+# Map some of the added mailboxes to standard folders
+set spoolfile = "+INBOX"
+set mbox = "+[Gmail]/Tous les messages"
+set postponed = "+[Gmail]/Brouillons"
+# Set record as an empty string to avoid replys saved twice with Gmail. Gmail SMTP server stores the message automatically
+set record = ""
+# ------------------
+# Mutt local folders
+# ------------------
+# Where to store aliases
+set alias_file = ~/.mutt/alias
+# Where to store headers. Don't forget the trailing /, otherwise mutt creates a file, not a folder, which causes the cache to be erased when switching mailboxes in mutt (see: https://github.com/neomutt/neomutt/issues/154)
+set header_cache = ~/.mutt/cache/headers/
+# Where to store bodies
+set message_cachedir = ~/.mutt/cache/bodies
+# Where to store certs
+set certificate_file = ~/.mutt/certificates
+# Where to store temp files
+set tmpdir = ~/.mutt/temp
+# Entries for filetypes
+set mailcap_path = ~/.mutt/mailcap
+# Signature
+set signature = ~/.mutt/signature
+# -----------
+# Preferences
+# -----------
+# set imap_keepalive = 300
+set wait_key = no
+# Default mailbox type when creating new folders
+# set mbox_type = Maildir
+# Number of seconds mutt will wait for user input
+# set timeout = 3
+# Minimum time between scans (don't put it at 0 or it becomes very slow)
+# set mail_check = 5
+# Unset move for Gmail (it does it)
+unset move
+# Strip headers and eval mimes when piping
+set pipe_decode
+# Strip headers and eval mimes before searching
+set thorough_search
+# Disable marking messages as old
+unset mark_old
+# Disable beep sound
+set beep = no
+# Skip the initial send-menu
+set fast_reply
+# Skip some confirmations
+set delete
+unset confirmappend
+set quit
+# Remove the + symbol indicating wrapped lines
+unset markers
+# Edit headers in compose view
+set edit_headers
+# Set default when answering to an email with empty subject
+set empty_subject = "Re:"
+# -------------------------------------
+# Show a mini-index on top of the pager
+# -------------------------------------
+set pager_index_lines = 8
+# ------------
+# Reverse name
+# ------------
+set reverse_name
+unset reverse_realname
+# ------
+# Reflow
+# ------
+# Should reflow email sent with format=flowed but is not working with Gmail as it doesn't send the format=flowed header
+# set reflow_text
+# set reflow_wrap = 0
+# ---------------------
+# Display wrap in pager
+# ---------------------
+# Tell mutt to wrap at 78 chars for display
+set wrap = 78
+# Include a copy of the message when answering
+set include = yes
+# -------
+# Goobook
+# -------
+set query_command="goobook query '%s'"
+# -------
+# Sidebar
+# -------
+set sidebar_visible
+set sidebar_divider_char = ' │ '
+# This combination of chars successfully shortens Gmail Inboxes
+set sidebar_delim_chars = " /"
+# Allows customizing the sidebar_format
+set mail_check_stats
+# Custom sidebar_format
+set sidebar_format = "%B%?N?•?%* %S"
+# Abbreviate paths
+set sidebar_short_path
+# Width
+set sidebar_width = 20
+# ------------
+# Mail display
+# ------------
+# Ignore all headers
+ignore *
+# Show only these
+unignore from: to: cc: date: subject:
+# Some distros order things by default
+unhdr_order *
+# Reorder
+hdr_order from: to: cc: date: subject:
+# -------------
+# Index display
+# -------------
+set date_format = "%d/%m/%y"
+set index_format = "[%Z]  %D  %-20.20F  %s"
+# Sort by threads like in Gmail
+set sort = threads
+# Don't create threads based on subject only
+set strict_threads
+# When sorting by threads, this variable controls how threads are sorted
+set sort_aux = reverse-last-date-received
+# Don't collapse on an unread message
+set uncollapse_jump
+# Define what counts as a reply (used to build the thread view)
+set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
+# Remove waiting time
+set sleep_time = 0
+# Open text/html
+# auto_view text/html
+# Edit with vim
+set editor = "vim"
+# -----------------
+# Using text_flowed
+# -----------------
+# Enable the composition of hard-wrapped messages in Vim
+# Vim options should be set accordingly (fo +=aw and tw=78 or something else)
+# set text_flowed
+# Edit: causes incorrect display in Inbox (message is hard wrapped)
+# UI {{{1
+# =======
+# -----------
+# Color theme
+# -----------
+source ~/.mutt/themes/onedark.muttrc
+
+# Key bindings {{{1
+# =================
+# -----
+# Modes
+# -----
+# "index": list the emails of an opened folder, it's the main mode.
+# "pager": display a selected e-mail.
+# "attach": list the parts of MIME attachments.
+# "compose": set up a new email to be sent out.
+# "browser": directory listing when searching for folder to change to.
+# ---------
+# Sub-modes
+# ---------
+# "alias": list aliases (in mutt, your collection of aliases is your address book) to choose from.
+# "query": often used to reference a database, a common protocol being LDAP.
+# "postpone": list of postponed e-mails to selecting for editing.  "pgp": list of PGP or GnuPG keys, depending on your configuration.
+# "editor": the input line when you are supposed to enter some text.
+# -------
+# Remarks
+# -------
+# Always necessary to provide a default for folder-hook, otherwise a macro can be inherited from a previously selected folder
+# The save-messages bindings assume confirmappend has been unset (otherwise <enter> would need to be input twice)
+# -----
+# Index
+# -----
+bind index g noop
+bind index gg first-entry
+bind index G last-entry
+bind index R group-reply
+bind index <tab> sync-mailbox
+bind index <space> collapse-thread
+# Don't skip deleted messages
+bind index k previous-entry
+bind index j next-entry
+bind index t toggle-new
+bind index e tag-entry
+bind index E tag-thread
+bind index . tag-prefix
+# -----
+# Pager
+# -----
+bind pager g noop
+# Use j an k to scroll inside messages within the pager
+bind pager k previous-line
+bind pager j next-line
+bind pager e noop
+macro pager u "|urlview<enter>" "Call urlview to open links"
+# -------------
+# Index & pager
+# -------------
+# Make reply to all the default
+bind index,pager r group-reply
+bind index,pager R reply
+# Search
+bind index,pager : search
+bind index,pager N search-opposite
+# Command
+bind index,pager = enter-command
+# Previous, next entry
+bind index,pager p previous-entry
+bind index,pager w next-entry
+# Archive
+folder-hook "." 'bind index,pager a noop'
+folder-hook "(INBOX|Spam|Corbeille|Calls)" 'macro index,pager a "<save-message>+[Gmail]/Tous<quote-char> les<quote-char> messages<enter><sync-mailbox>" "Put in archive"'
+# Put in inbox
+# On the "Tous les messages" mailbox, undelete all messages after (purely visual fix)
+folder-hook "." 'bind index,pager i noop'
+folder-hook "(Spam|Corbeille|Calls)" 'macro index,pager i "<save-message>=INBOX<enter><sync-mailbox>" "Put in inbox"'
+folder-hook "(Tous\ les\ messages)" 'macro index,pager i "<save-message>=INBOX<enter><sync-mailbox>U~A<enter>" "Put in inbox"'
+# Delete to trash except in trash
+folder-hook "." 'macro index,pager d "<save-message>+[Gmail]/Corbeille<enter><sync-mailbox>" "Put in trash"'
+folder-hook "Corbeille" bind index,pager d noop
+# Mark as spam except in spam
+folder-hook "." 'macro index,pager x "<save-message>+[Gmail]/Spam<enter><sync-mailbox>" "Put in spam"'
+folder-hook "Spam" 'bind index,pager x noop'
+# Mark as starred except in spam, trash
+folder-hook "." 'macro index,pager s "<flag-message><sync-mailbox>" "Mark as starred"'
+folder-hook "(Spam|Corbeille)" 'bind index,pager s noop'
+# Open message in tmux split
+bind index,pager b noop
+macro index,pager bs "|~/.mutt/scripts/open-in-tmux-split.sh -v<enter>"
+macro index,pager bv "|~/.mutt/scripts/open-in-tmux-split.sh -h<enter>"
+# --------------------
+# Switch SMTP identity
+# --------------------
+bind index,pager z noop
+macro index,pager zg "<enter-command>set from = $my_gmail_from<enter><enter-command>set smtp_url = 'smtps://$my_gmail_user@$my_gmail_smtp/'<enter><enter-command>set smtp_pass = $my_gmail_pass<enter><enter-command>set status_format = $my_gmail_from<enter>" "Use Gmail identity"
+macro index,pager ze "<enter-command>set from = $my_ensad_from<enter><enter-command>set smtp_url = 'smtps://$my_ensad_user@$my_ensad_smtp/'<enter><enter-command>set smtp_pass = $my_ensad_pass<enter><enter-command>set status_format = $my_ensad_from<enter>" "Use personal identity"
+macro index,pager zp "<enter-command>set from = $my_personal_from<enter><enter-command>set smtp_url = 'smtps://$my_personal_user@$my_personal_smtp/'<enter><enter-command>set smtp_pass = $my_personal_pass<enter><enter-command>set status_format = $my_personal_from<enter>" "Use Ensad identity"
+# ------
+# Attach
+# ------
+bind attach g noop
+# View attachments properly
+bind attach <return> view-mailcap
+# --------------------
+# Index, pager, attach
+# --------------------
+# Navigate between folders
+# TODO why not working in attach?
+macro index,pager,attach ga "<change-folder>+[Gmail]/Tous<quote-char> les<quote-char> messages<enter>" "Go to all mail"
+macro index,pager,attach gc "<change-folder>+Calls<enter>" "Go to label 'Calls'"
+macro index,pager,attach gp "<change-folder>+[Gmail]/Brouillons<enter>" "Go to drafts"
+macro index,pager,attach gi "<change-folder>+INBOX<enter>" "Go to inbox"
+macro index,pager,attach gs "<change-folder>+[Gmail]/Suivis<enter>" "Go to starred messages"
+macro index,pager,attach ge "<change-folder>+[Gmail]/Messages<quote-char> envoyés<enter>" "Go to sent mail"
+macro index,pager,attach gd "<change-folder>+[Gmail]/Corbeille<enter>" "Go to trash"
+macro index,pager,attach gx "<change-folder>+[Gmail]/Spam<enter>" "Go to spam"
+# ------
+# Editor
+# ------
+# Autocomplete with tab
+bind editor <Tab> complete-query
+# Allows using commands (or filenames) with space in the editor
+bind editor <space> noop
+# -----
+# Query
+# -----
+bind query : search
+bind query N search-opposite

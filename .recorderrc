@@ -1,0 +1,3 @@
+# Path to directory containing record files
+record_dir="/Users/lallemand/Desktop/dev-bookmark/bookmarks"
+# record_dir="$HOME/.recorder"

@@ -83,7 +83,7 @@ else
 fi;
 
 # Set the terminal title and prompt.
-PS1="\n\[\e[1m\]"; # Newline + enable bold
+PS1="\n"; # Newline
 PS1+="\[\e[38;5;160m\]${sshPrefix}"; # Indicate if we're on a ssh connexion
 PS1+="\[\e[38;5;160m\]${rootPrefix}"; # Indicate if we're logged as root
 PS1+="\[\e[38;5;239m\]${prefixSpacer}";

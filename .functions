@@ -1,4 +1,10 @@
+# vim: foldmethod=marker
+
+# Miscellaneous {{{1
+# ==================
+# -----------------------------------------
 # cd to the path of the front Finder window
+# -----------------------------------------
 function cdf() {
     target=`osascript -e 'tell application "Path Finder" to set f to POSIX path of the target of the front finder window'`
     if [ "$target" != "" ]; then
@@ -7,67 +13,171 @@ function cdf() {
         echo 'No Path Finder window found' >&2
     fi
 }
+# ---------------------------------
+# Copy the current directory's name
+# ---------------------------------
+function cdn() {
+    echo -n $(basename "$PWD") | pbcopy
+}
+# ---------------------------------
+# Copy the current directory's path
+# ---------------------------------
+function cdp() {
+    echo -n "$PWD" | pbcopy
+}
+# -------------------------------------------------------
+# Color-enabled cat with fallback for unrecognized format
+# -------------------------------------------------------
+function color-cat() {
+    pygmentize -O style=solarized -f console256 "$1" 2> /dev/null || \cat "$1"
+}
+# --------------------
+# Combine mkdir and cd
+# --------------------
+function mcd() {
+    mkdir -p -- "$1" &&
+      cd -P -- "$1"
+}
+# --------------------------------------------------
+# Schedule sleep in X minutes, use like: sleep-in 60
+# --------------------------------------------------
+function sleep-in() {
+    local minutes=$1
+    local datetime=`date -v+${minutes}M +"%m/%d/%y %H:%M:%S"`
+    sudo pmset schedule sleep "$datetime"
+}
+# ---------------------------
+# Cancel all scheduled sleeps
+# ---------------------------
+function sleep-cancel-all() {
+    NUM_OF_SLEEPS=$(pmset -g sched | wc -l)
+    if [[ $NUM_OF_SLEEPS -gt 0 ]]; then
+        # The first line of output is a header, ignore it.
+        NUM_OF_SLEEPS=$(expr $NUM_OF_SLEEPS - 1)
+        seq $NUM_OF_SLEEPS | xargs -Iz sudo pmset schedule cancel 0
+    fi
+}
+# --------------------------------------------
+# Sync local dotfiles with the .dotfile folder
+# --------------------------------------------
+function syncdot() {
+    . ~/.dotfiles/bootstrap.sh $1
+}
+# --------------------------------
+# Shortcut to macOS' open function
+# --------------------------------
+function o() {
+    if [ -z ${1+x} ]; then
+        # See https://stackoverflow.com/questions/7131670/make-a-bash-alias-that-takes-a-parameter
+        open .
+    else
+        open $1
+    fi
+}
+# --------------------------
+# Edit Karabiner private.xml
+# --------------------------
+function kox() {
+    vim /Users/lallemand/Library/Application\ Support/Karabiner/private.xml
+}
+# ---------------------------
+# Show hidden files in Finder
+# ---------------------------
+alias show='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+# ---------------------------
+# Hide hidden files in Finder
+# ---------------------------
+alias hide='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
 
+# fzf {{{1
+# ========
+# ---------------------------------------
 # Use fzf to recursively navigate folders
+# ---------------------------------------
 # Press Enter to select folder
 # Currently selected folder is displayed at the bottom
 # Press Esc or Tab to exit in the selected folder
-function f() {
+function nav() {
     dir=`{ find * -maxdepth 0 -type d -print 2> /dev/null; echo '..'; } \
         | fzf --ansi --preview="echo \"›$(basename "$PWD")\"; CLICOLOR_FORCE=1 ls -1apG . | grep -v / | sed 's/^/  /'" --preview-window=down --bind "tab:abort" --bind "ctrl-p:preview-up" --bind "ctrl-n:preview-down"` \
         && cd "$dir" \
-        && f
+        && nav
     unset dir
 }
-
+# -------------------------
 # Browse z history with fzf
+# -------------------------
 function zz() {
     [ $# -gt 0 ] && _z "$*" && return
         cd "$(_z -l 2>&1 | fzf-tmux --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
         # cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
 }
-
-# Copy the current directory's name
-function cdn() {
-    echo -n $(basename "$PWD") | pbcopy
+# --------------------------
+# cd to a directory using fd
+# --------------------------
+# Taken from: https://github.com/stevenqzhang/dotfiles/blob/master/.bashrc
+function d() {
+    local dir
+    dir=$(fd . -t d ~ 2> /dev/null | fzf --exact) && cd "${dir}"
 }
-
-# Copy the current directory's path
-function cdp() {
-    echo -n "$PWD" | pbcopy
-}
-
-# Open the path of the front Finder window as a directory in PhpStorm
-function phs() {
-    target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
-    if [ "$target" != "" ]; then
-        open -a /Applications/PhpStorm.app "$target";
-    else
-        echo 'No Finder window found' >&2
+# -------------------------------
+# Find files and folders using fd
+# -------------------------------
+# Press:
+# - Enter key to open with $EDITOR
+# - CTRL-E to open with the with the `open` command
+# - CTRL-G to cd to the folder or the file's folder
+# - CTRL-F to reveal in Finder
+# - CTRL-R to launch ranger in the file's folder
+# Options: -l to limit search in current folder. Otherwise, search will be performed in $HOME.
+# Other arguments will be passed to fd.
+function f() {
+    local out file key search_folder
+    search_folder="$HOME"
+    if [ "$1" = "-l" ]; then
+        search_folder="$PWD"
+        shift 1
+    fi
+    IFS=$'\n' read -d '' -r -a out < <(fd "$@" . "$search_folder" 2> /dev/null | fzf --exact --exit-0 --expect=ctrl-e,ctrl-g,ctrl-r,ctrl-f,enter)
+    key=${out[0]}
+    file=${out[1]}
+    if [ -n "$file" ]; then
+        if [ "$key" = ctrl-e ]; then
+            open "$file"
+        elif [ "$key" = ctrl-g ]; then
+            if [ -d "$file" ]; then
+                cd "$file"
+            else
+                cd "$(dirname "$file")"
+            fi
+        elif [ "$key" = ctrl-r ]; then
+            if [ -d "$file" ]; then
+                cd "$file"
+            else
+                cd "$(dirname "$file")"
+            fi
+            ranger
+        elif [ "$key" = ctrl-f ]; then
+            open -R "$file"
+        else
+            ${EDITOR:-vim} "$file"
+        fi
     fi
 }
-
-# Open the path of the front Finder window as a directory in Sublime Text
-function sut() {
-    target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
-    if [ "$target" != "" ]; then
-        subl -a "$target";
-    else
-        echo 'No Finder window found' >&2
-    fi
+# Shortcut to use with fd's -H option enabled (include hidden files in search)
+function fh() {
+    f -H
+}
+# Shortcut to use in current folder
+function fl() {
+    f -l
 }
 
-# Open the path of the front Finder window as a directory in SourceTree
-function sot() {
-    target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
-    if [ "$target" != "" ]; then
-        open -a /Applications/SourceTree.app/ "$target";
-    else
-        echo 'No Finder window found' >&2
-    fi
-}
-
-# Upgrade node with nvm
+# Updates {{{1
+# ============
+# --------------------
+# Update node with nvm
+# --------------------
 function update-node() {
     # Update nvm
     echo 'Updating nvm...'
@@ -80,66 +190,26 @@ function update-node() {
     echo 'Updating node...'
     nvm install node
 }
-
-# Color-enabled cat with fallback for unrecognized format
-function color-cat() {
-    pygmentize -O style=solarized -f console256 "$1" 2> /dev/null || \cat "$1"
+# ----------
+# Update NPM
+# ----------
+# See: https://github.com/creationix/nvm/issues/1541
+function update-npm() {
+    npm install -g npm
+    # Update packages
+    npm update -g
 }
-
-# Create tab in iTerm2
-function nt() {
-    osascript -e 'tell application "iTerm" to tell current window to create tab with default profile' 1> /dev/null
+# ------------
+# Update macOS
+# ------------
+function update-macos() {
+    sudo softwareupdate -i -a
 }
-
-# Combine mkdir and cd
-function mcd() {
-    mkdir -p -- "$1" &&
-      cd -P -- "$1"
+# ---------------
+# Update Homebrew
+# ---------------
+function update-brew() {
+   brew update
+   brew upgrade
+   brew cleanup
 }
-
-# Schedule sleep in X minutes, use like: sleep-in 60
-function sleep-in() {
-    local minutes=$1
-    local datetime=`date -v+${minutes}M +"%m/%d/%y %H:%M:%S"`
-    sudo pmset schedule sleep "$datetime"
-}
-
-# Cancel all scheduled sleeps
-function sleep-cancel-all() {
-    NUM_OF_SLEEPS=$(pmset -g sched | wc -l)
-    if [[ $NUM_OF_SLEEPS -gt 0 ]]; then
-        # The first line of output is a header, ignore it.
-        NUM_OF_SLEEPS=$(expr $NUM_OF_SLEEPS - 1)
-        seq $NUM_OF_SLEEPS | xargs -Iz sudo pmset schedule cancel 0
-    fi
-}
-# Sync local dotfiles with the .dotfile folder
-function syncdot() {
-    . ~/.dotfiles/bootstrap.sh $1
-}
-
-# Shortcur to macOS' open function
-function o() {
-    if [ -z ${1+x} ]; then
-        # See https://stackoverflow.com/questions/7131670/make-a-bash-alias-that-takes-a-parameter
-        open .
-    else
-        open $1
-    fi
-}
-
-# Compute the block size when executing a tmux command outside tmux and store it in an environment variable for retrieval within tmux. Allows modified Kitty's icat routine to compute the terminal's width in pixels. This hack is needed because TIOCGWINSZ returns a width of 0 px in tmux, which breaks the way icat works (see: https://github.com/kovidgoyal/kitty/issues/413). Usage: after each change of the terminal's window size or font size within tmux, the environment variable can be updated by detaching and reattaching to the session, for instance.
-# TODO disabled as icat is not working in tmux even with this hack
-# function tmux() {
-#     tmp=/tmp/kitty-screensize-output
-#     if [ "$TERM" = "xterm-kitty" ] && ! [ -n "$TMUX" ]; then
-#         # If we're using kitty and we're outside tmux, recompute the CELL_WIDTH_PX environment variable and forward the args to the real tmux command
-#         # Use Kitty's method to retrieve the terminal width and write it into a temp file (this kitty -c command can't be used into a shell subcommand)
-#         kitty -c "from kitty.icat import *; s = screen_size(); print(s.rows, s.cols, s.width, s.height, sep='\n', file=open('$tmp', 'w'))"
-#         # cols=$(sed '2q;d' $tmp)
-#         # width=$(sed '3q;d' $tmp)
-#     fi
-#     unset tmp
-#     # forward the args to the 'real' tmux command
-#     /usr/local/bin/tmux "$@"
-# }

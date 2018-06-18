@@ -3,14 +3,14 @@
 
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend '$PATH'.
-# TODO seems to cause problems with fzf (bindings not working in vi mode) Edit: ?
 for file in ~/.{path,bash_prompt,exports,aliases,functions}; do
-    [ -r "$file" ] && [ -f "$file" ] && source "$file";
-done;
-unset file;
+    [ -r "$file" ] && [ -f "$file" ] && source "$file"
+done
+unset file
 
 # z
-. /usr/local/etc/profile.d/z.sh
+# -
+source /usr/local/etc/profile.d/z.sh
 
 # fzf
 # ---
@@ -20,13 +20,14 @@ unset file;
 # NB: when using the trigger sequence, fzf will use find and not the default_command defined below
 export FZF_COMPLETION_TRIGGER='$$'
 # Default options
-export FZF_DEFAULT_OPTS="--algo=v1"
+export FZF_DEFAULT_OPTS="--algo=v1 --color 16"
 # Use ag as default command, respect .gitignore (ag default behavior)
 # This is the command that will be used by the vim plugin
 export FZF_DEFAULT_COMMAND='ag --hidden --silent --depth 10 --ignore .git --ignore node_modules --ignore **.swp -g ""' # Use --hidden to list hidden files
 # Search for all files
 export FZF_CTRL_T_COMMAND='ag --hidden --silent --depth 10 --ignore .git --ignore node_modules --ignore **.swp -g ""'
 # Search only for folders
+# TODO not used anymore because Alt is used as Option
 export FZF_ALT_C_COMMAND='ag --silent --depth 10 --ignore .git --ignore node_modules --ignore Applications -g "" | sed -e "s:/[^/]*$::" | uniq'
 
 # nvm
@@ -45,6 +46,10 @@ eval "$(/usr/local/bin/pyenv init -)"
 # Make sure ~/.lessfilter is chmod u+x
 export LESS='-R'
 export LESSOPEN='|~/.lessfilter %s'
+
+# locale
+# ------
+export LANG=en_US.UTF-8
 
 # Special settings when running urxvt
 # ------------------------------------

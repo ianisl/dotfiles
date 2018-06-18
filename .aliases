@@ -1,24 +1,22 @@
+# Miscellaneous
+alias ..='cd ..'
+alias ls='ls -AFG'
+alias ca='color-cat'
+
+# Easier use of trash
+alias t='trash'
+
 # Hi-q convert with ffmpeg
 alias ffhiq='/Users/lallemand/src/sh/hi-q-convert-with-ffmpeg.sh'
 
-# Get OS X Software Updates, and update Homebrew, npm, and their installed packages
-# TODO rewrite as a function
-alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g;'
-
-# Show hidden files
-alias show='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
-
-# Hide hidden files
-alias hide='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
-
-# Edit Karabiner private.xml
-alias kox='vim /Users/lallemand/Library/Application\ Support/Karabiner/private.xml'
-
-alias ..='cd ..'
-
-alias ls='ls -AFG'
-
-alias cat='color-cat'
-
 # Open ranger in 'stay in last visited dir' mode
 alias r='ranger --choosedir=$HOME/.rangerdir; LASTDIR=`cat $HOME/.rangerdir`; cd "$LASTDIR"'
+
+# Open neomutt in downloads folder
+alias mutt='cd ~/Downloads; neomutt; cd -'
+
+# Download WeTransfer files with wget
+alias wetransfer='wget –user-agent'
+
+# Use GNU sort
+alias sort='gsort'

@@ -1,0 +1,24 @@
+# MS Word documents
+application/msword; ~/.mutt/scripts/view-attachment.sh %s "-" '/Applications/Microsoft\ Word.app'
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; ~/.mutt/scripts/view-attachment.sh %s "-" '/Applications/Microsoft\ Word.app'
+
+# Images
+image/jpg; ~/.mutt/scripts/view-attachment.sh %s jpg
+image/jpeg; ~/.mutt/scripts/view-attachment.sh %s jpg
+image/pjpeg; ~/.mutt/scripts/view-attachment.sh %s jpg
+image/png; ~/.mutt/scripts/view-attachment.sh %s png
+image/gif; ~/.mutt/scripts/view-attachment.sh %s gif
+
+# PDFs
+application/pdf; ~/.mutt/scripts/view-attachment.sh %s pdf
+
+# Word
+
+# HTML
+text/html; ~/.mutt/scripts/view-attachment.sh %s html
+
+# Plain text
+text/plain; view -c 'set nomodifiable' %s 
+
+# Unidentified files
+application/octet-stream; ~/.mutt/scripts/view-attachment.sh %s "-"

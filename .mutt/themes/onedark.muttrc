@@ -1,0 +1,67 @@
+# vim: filetype=muttrc
+
+# -----------------
+# General interface
+# -----------------
+# Default text
+color normal color249 color0
+# Status bar
+color status color241 color0
+# color status color234 color238
+# Selection bar
+color indicator color249 color238
+# Error messages
+color error color1 color0
+# Connection messages, etc
+color message color3 color0
+# Prefixes appearing in prompt. Eg 'To:' when composing a message
+color prompt color4 color0
+
+# -------
+# Sidebar
+# -------
+# Selection bar
+color sidebar_indicator color0 color39
+# Divider
+color sidebar_divider color0 color0
+# Normal folders
+color sidebar_ordinary color39 color0
+# Folders containing new mail
+color sidebar_new color39 color0
+# Folders containing flagged mail
+color sidebar_flagged color39 color0
+
+# ------------
+# Message list
+# ------------
+# All messages
+color index color247 color0 "~A"
+# Unread messages
+color index color4 color0 "~U"
+# "Tagged" (selected) messages.
+color index color3 color0 "~T"
+# Flagged messages
+color index color2 color0 "~F"
+# arrow in threads
+color tree color5 color0
+
+# --------------
+# Message header
+# --------------
+color hdrdefault color4 color0
+# color header color4 color0 "^(From)"
+# color header color4 color0 "^(To)"
+# color header color4 color0 "^(Date)"
+color header color1 color0 "^(Subject)"
+
+# ------------
+# Message text
+# ------------
+# Previous messages (quoted)
+color quoted color8 color0
+# Links
+color body color3 color0 "(https?|ftp|news|telnet|finger)://[^ \"\t\r\n]*"
+color body color3 color0 "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
+color body color3 color0 "mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
+# Signature
+# color signature color8 color0
