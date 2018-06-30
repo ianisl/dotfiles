@@ -117,8 +117,25 @@ function zz() {
 # --------------------------
 # Taken from: https://github.com/stevenqzhang/dotfiles/blob/master/.bashrc
 function d() {
-    local dir
-    dir=$(fd . -t d ~ 2> /dev/null | fzf --exact) && cd "${dir}"
+    local dir search_folder
+    search_folder="$HOME"
+    if [ "$1" = "-l" ]; then
+        search_folder="$PWD"
+        shift 1
+    fi
+    dir=$(fd "$@" . "$search_folder" -t d 2> /dev/null | fzf --exact) && cd "${dir}"
+}
+# Shortcut to use with fd's -H option enabled (include hidden files in search)
+function dh() {
+    d -H
+}
+# Shortcut to use in current folder
+function dl() {
+    d -l
+}
+# Shortcut to use with -H option in current folder
+function dlh() {
+    d -l -H
 }
 # -------------------------------
 # Find files and folders using fd
@@ -171,6 +188,10 @@ function fh() {
 # Shortcut to use in current folder
 function fl() {
     f -l
+}
+# Shortcut to use with -H option in current folder
+function flh() {
+    f -l -H
 }
 
 # Updates {{{1

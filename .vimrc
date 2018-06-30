@@ -337,14 +337,15 @@ endfunction
 " ---------------------------------------
 " Execute shell command in a Vim terminal
 " ---------------------------------------
-" Map , to :q in the opened terminal buffer
+" To pass a file path as part of a shell command to this function, use Vim's :S filename-modifier (and see caveat below)
 command! -complete=shellcmd -nargs=+ Term call <SID>ExecuteInVimTerminal(<q-args>)
 function! <SID>ExecuteInVimTerminal(command)
     let command = join(map(split(a:command), 'expand(v:val)'))
-    " Display command name without escaping characters
-    " echo 'Executing ' . substitute(command, "\\", "", "g") . '...'
+    " For some reason, single-quote escaped strings obtained with the :S filename-modifier still undergo word-splitting when passed to Vim's terminal command. As a fix, we can convert all single quotes to double quotes.
+    let command = substitute(command, "'", "\"", "g")
     silent! call term_start(command, {"term_rows": 15, "term_name": "Terminal"})
-    setlocal bufhidden=wipe nobuflisted noswapfile nonumber
+    setlocal nobuflisted nonumber
+    " Map , to :q in the opened terminal buffer
     silent! execute 'nnoremap <silent> <buffer> , :q<CR>'
 endfunction
 " ----------------------------------------------------

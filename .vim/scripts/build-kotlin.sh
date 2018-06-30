@@ -8,6 +8,6 @@ dir="$(dirname "$1")"
 dir="${dir%/src*}"
 if [ -f "$dir/gradlew" ]; then
     cd "$dir"
-    ./gradlew run
+    ./gradlew run 2> /dev/null
 fi
 unset dir
