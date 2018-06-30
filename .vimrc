@@ -24,6 +24,7 @@ Plugin 'tpope/vim-repeat'
 Plugin 'joshdick/onedark.vim'
 Plugin 'francoiscabrol/ranger.vim'
 Plugin 'junegunn/vim-easy-align'
+Plugin 'udalov/kotlin-vim'
 " Plugin 'lilydjwg/colorizer'
 " TODO install?
 " osyo-manga/vim-over
@@ -88,6 +89,7 @@ augroup custom_comment_formatting
     autocmd!
     autocmd FileType markdown setlocal commentstring=<!--\ %s\ -->
     autocmd FileType php setlocal commentstring=//\ %s
+    autocmd FileType kotlin setlocal commentstring=//\ %s
 augroup END
 " ----------------------
 " Location of new splits
@@ -260,6 +262,20 @@ let g:fzf_colors =
 
 " Functions {{{1
 " ==============
+" ----------------
+" Paste and indent
+" ----------------
+" This function performs the 'paste and indent' sequence (p`[v`]=) then brings back the cursor to its previous position. Otherwise using the 'paste and indent' mapping of p and P to paste only a portion of a line would annoyingly bring the cursor to the beginning of the line.
+function! <SID>PasteAndIndent(before)
+    let l = line(".")
+    let c = col(".")
+    if a:before == 1
+        execute 'normal! "' . v:register . 'P`[v`]='
+    else
+        execute 'normal! "' . v:register . 'p`[v`]='
+    endif
+    call cursor(l, c)
+endfun
 " -----------------------------------
 " Set cursor to its normal mode value
 " -----------------------------------
@@ -271,6 +287,7 @@ endfunction
 " -----------------------------
 function! <SID>StripTrailingWhitespaces() " Preserves cursor position when saving
     " Don't strip on mails (allows using text_flowed in mutt)
+    " TODO still necessary?
     if &ft =~ 'mail'
         return
     endif
@@ -298,12 +315,13 @@ function! AutoFormatProse()
   " TODO other rules
   call setline(a:firstline, split(f, "\n"))
 endfunction
-" ------------------------------------------------------------
-" Execute shell command and show results in new vertical split
-" ------------------------------------------------------------
+" --------------------------------------------------------------
+" Execute shell command and show results in new horizontal split
+" --------------------------------------------------------------
 " Source: http://vim.wikia.com/wiki/Display_output_of_shell_commands_in_new_window
-command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
-function! s:ExecuteInShell(command)
+" Map , to :q in the opened buffer
+command! -complete=shellcmd -nargs=+ Shell call <SID>ExecuteInShell(<q-args>)
+function! <SID>ExecuteInShell(command)
   let command = join(map(split(a:command), 'expand(v:val)'))
   let winnr = bufwinnr('^' . command . '$')
   silent! execute  winnr < 0 ? 'botright new ' . fnameescape(command) : winnr . 'wincmd w'
@@ -314,8 +332,20 @@ function! s:ExecuteInShell(command)
   silent! execute 'resize 15'
   silent! redraw
   silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
-  silent! execute 'nnoremap <silent> <buffer> <LocalLeader>r :call <SID>ExecuteInShell(''' . command . ''')<CR>'
-  " echo 'Shell command ' . command . ' executed.'
+  silent! execute 'nnoremap <silent> <buffer> , :q<CR>'
+endfunction
+" ---------------------------------------
+" Execute shell command in a Vim terminal
+" ---------------------------------------
+" Map , to :q in the opened terminal buffer
+command! -complete=shellcmd -nargs=+ Term call <SID>ExecuteInVimTerminal(<q-args>)
+function! <SID>ExecuteInVimTerminal(command)
+    let command = join(map(split(a:command), 'expand(v:val)'))
+    " Display command name without escaping characters
+    " echo 'Executing ' . substitute(command, "\\", "", "g") . '...'
+    silent! call term_start(command, {"term_rows": 15, "term_name": "Terminal"})
+    setlocal bufhidden=wipe nobuflisted noswapfile nonumber
+    silent! execute 'nnoremap <silent> <buffer> , :q<CR>'
 endfunction
 " ----------------------------------------------------
 " Switch seamlessly between vim windows and tmux panes
@@ -517,15 +547,20 @@ vnoremap v V
 " --------------------------------------------------------
 noremap <silent> ¶ :silent w<CR>
 inoremap <silent> ¶ <Esc>:silent w<CR>
+" ----------------
+" Paste and indent
+" ----------------
+" Normal mode only (in particular, exclude visual mode)
+nnoremap <silent> p :call <SID>PasteAndIndent(0)<CR>
+nnoremap <silent> P :call <SID>PasteAndIndent(1)<CR>
 " ---------------------
 " System copy and paste
 " ---------------------
 noremap ù "+y
-noremap ¥ "+p
+" Define a recursive mapping to use the paste and indent mapping define above
+nmap ¥ "+p
 " Paste in insert mode
-inoremap ¥ <c-o>"+p
-" Copy current line in insert mode
-" inoremap ù <c-o>"+yy
+inoremap ¥ <c-o>"+P
 " -----------------------
 " Swap lines with A-j A-k
 " -----------------------
@@ -606,16 +641,6 @@ xmap ga <Plug>(EasyAlign)
 " Abbreviations {{{1
 " ==================
 iabbrev todo TODO
-
-" Build systems {{{1
-" ==================
-augroup custom_build_systems
-    autocmd!
-    " Processing
-    " autocmd BufNewFile,BufRead *.pde nnoremap zb :Shell gulp start-processing<CR>
-    " See :h filename-modifiers
-    autocmd BufNewFile,BufRead *.pde nnoremap zb :Shell ~/.vim/scripts/build-processing.sh %:p:S<CR>
-augroup END
 
 " Filetype actions {{{1
 " =====================

@@ -20,3 +20,12 @@ alias wetransfer='wget –user-agent'
 
 # Use GNU sort
 alias sort='gsort'
+
+# Bat
+alias bat="bat --theme=TwoDark"
+
+# Use GNU cut
+alias cut="gcut"
+
+# xxd
+alias xxd="xxd -g 1"
