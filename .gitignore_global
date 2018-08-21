@@ -1,4 +1,19 @@
+# Vim
+# ---
 *.swp
 *.swo
-*~
+
+# macOS
+# -----
 .DS_Store
+
+# JetBrains
+# ---------
+.idea
+*.iml
+
+# ?
+# -
+*~
+
+

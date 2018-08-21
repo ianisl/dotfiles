@@ -45,7 +45,7 @@ set smtp_pass = $my_gmail_pass
 # -------------------------
 # Alternate email addresses
 # -------------------------
-alternates ianis.lallemand@ensad.fr ianis@ianislallemand.com ianis@ianislallemand.net
+alternates ianis.lallemand@ensad.fr ianis@ianislallemand.com ianis@ianislallemand.net ianis.lallemand@usj.edu.mo
 # --------------------------
 # Gmail folder configuration
 # --------------------------
@@ -84,15 +84,16 @@ set signature = ~/.mutt/signature
 # -----------
 # Preferences
 # -----------
-# set imap_keepalive = 300
 set wait_key = no
 # Default mailbox type when creating new folders
 # set mbox_type = Maildir
-# Number of seconds mutt will wait for user input
-# set timeout = 3
-# Minimum time between scans (don't put it at 0 or it becomes very slow)
-# set mail_check = 5
-# Unset move for Gmail (it does it)
+# How often keepalive messages are sent in non-interactive contexts (eg when composing messages)
+set imap_keepalive = 60
+# Amount of time between the last user input and performance of some operations byt mutt (like maintaining an imap connection). Reducing this polls the current mailbox more often, but if too low, this may 'freeze' mutt between two user input sequences
+set timeout = 60
+# Controls how frequently other mailboxes are polled (don't put it at 0 or it becomes very slow)
+set mail_check = 60
+# Unset move for Gmail (it does it by itself)
 unset move
 # Strip headers and eval mimes when piping
 set pipe_decode
@@ -271,11 +272,11 @@ folder-hook "." 'bind index,pager i noop'
 folder-hook "(Spam|Corbeille|Calls)" 'macro index,pager i "<save-message>=INBOX<enter><sync-mailbox>" "Put in inbox"'
 folder-hook "(Tous\ les\ messages)" 'macro index,pager i "<save-message>=INBOX<enter><sync-mailbox>U~A<enter>" "Put in inbox"'
 # Delete to trash except in trash
-folder-hook "." 'macro index,pager d "<save-message>+[Gmail]/Corbeille<enter><sync-mailbox>" "Put in trash"'
-folder-hook "Corbeille" bind index,pager d noop
+folder-hook "." 'macro index,pager x "<save-message>+[Gmail]/Corbeille<enter><sync-mailbox>" "Put in trash"'
+folder-hook "Corbeille" bind index,pager x noop
 # Mark as spam except in spam
-folder-hook "." 'macro index,pager x "<save-message>+[Gmail]/Spam<enter><sync-mailbox>" "Put in spam"'
-folder-hook "Spam" 'bind index,pager x noop'
+folder-hook "." 'macro index,pager ! "<save-message>+[Gmail]/Spam<enter><sync-mailbox>" "Put in spam"'
+folder-hook "Spam" 'bind index,pager ! noop'
 # Mark as starred except in spam, trash
 folder-hook "." 'macro index,pager s "<flag-message><sync-mailbox>" "Mark as starred"'
 folder-hook "(Spam|Corbeille)" 'bind index,pager s noop'
@@ -290,6 +291,7 @@ bind index,pager z noop
 macro index,pager zg "<enter-command>set from = $my_gmail_from<enter><enter-command>set smtp_url = 'smtps://$my_gmail_user@$my_gmail_smtp/'<enter><enter-command>set smtp_pass = $my_gmail_pass<enter><enter-command>set status_format = $my_gmail_from<enter>" "Use Gmail identity"
 macro index,pager ze "<enter-command>set from = $my_ensad_from<enter><enter-command>set smtp_url = 'smtps://$my_ensad_user@$my_ensad_smtp/'<enter><enter-command>set smtp_pass = $my_ensad_pass<enter><enter-command>set status_format = $my_ensad_from<enter>" "Use personal identity"
 macro index,pager zp "<enter-command>set from = $my_personal_from<enter><enter-command>set smtp_url = 'smtps://$my_personal_user@$my_personal_smtp/'<enter><enter-command>set smtp_pass = $my_personal_pass<enter><enter-command>set status_format = $my_personal_from<enter>" "Use Ensad identity"
+macro index,pager zs "<enter-command>set from = $my_saint_joseph_from<enter><enter-command>set smtp_url = 'smtps://$my_saint_joseph_user@$my_saint_joseph_smtp/'<enter><enter-command>set smtp_pass = $my_saint_joseph_pass<enter><enter-command>set status_format = $my_saint_joseph_from<enter>" "Use University of Saint Joseph identity"
 # ------
 # Attach
 # ------
@@ -307,8 +309,8 @@ macro index,pager,attach gp "<change-folder>+[Gmail]/Brouillons<enter>" "Go to d
 macro index,pager,attach gi "<change-folder>+INBOX<enter>" "Go to inbox"
 macro index,pager,attach gs "<change-folder>+[Gmail]/Suivis<enter>" "Go to starred messages"
 macro index,pager,attach ge "<change-folder>+[Gmail]/Messages<quote-char> envoyés<enter>" "Go to sent mail"
-macro index,pager,attach gd "<change-folder>+[Gmail]/Corbeille<enter>" "Go to trash"
-macro index,pager,attach gx "<change-folder>+[Gmail]/Spam<enter>" "Go to spam"
+macro index,pager,attach gx "<change-folder>+[Gmail]/Corbeille<enter>" "Go to trash"
+macro index,pager,attach g! "<change-folder>+[Gmail]/Spam<enter>" "Go to spam"
 # ------
 # Editor
 # ------

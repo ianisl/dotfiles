@@ -14,7 +14,7 @@ function doIt() {
         --exclude ".gitignore" \
         --exclude "bootstrap.sh" \
         --exclude "README.md" \
-        -avh --no-perms . ~
+        -avh --no-perms . ~ 1>/dev/null
     source ~/.bashrc
 }
 

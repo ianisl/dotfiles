@@ -1,0 +1,15 @@
+# ---------------------
+# Variable modification
+# ---------------------
+snippet pvar "Pipe variable through process"
+$1=$(echo "$${2:$1}" | $0)
+endsnippet
+
+# -------
+# General
+# -------
+snippet e "Echo variable"
+echo "$$0"
+endsnippet
+
+# vim:ft=snippets:

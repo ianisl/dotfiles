@@ -25,8 +25,12 @@ Plugin 'joshdick/onedark.vim'
 Plugin 'francoiscabrol/ranger.vim'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'udalov/kotlin-vim'
+Plugin 'kana/vim-textobj-user'
+Plugin 'reedes/vim-textobj-quote'
 " Plugin 'lilydjwg/colorizer'
 " TODO install?
+" google/vim-searchindex to replace anzu?
+" RRethy/vim-illuminate
 " osyo-manga/vim-over
 " wincent/replay
 " w0rp/ale
@@ -193,6 +197,7 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 let g:ctrlp_prompt_mappings = {
     \ 'PrtSelectMove("j")':   ['j', '<down>'],
     \ 'PrtSelectMove("k")':   ['k', '<up>'],
+    \ 'AcceptSelection("e")': [','],
     \ }
 let g:ctrlp_match_window = 'order:ttb,min:1,max:12,results:0'
 " -------------------
@@ -340,13 +345,45 @@ endfunction
 " To pass a file path as part of a shell command to this function, use Vim's :S filename-modifier (and see caveat below)
 command! -complete=shellcmd -nargs=+ Term call <SID>ExecuteInVimTerminal(<q-args>)
 function! <SID>ExecuteInVimTerminal(command)
-    let command = join(map(split(a:command), 'expand(v:val)'))
-    " For some reason, single-quote escaped strings obtained with the :S filename-modifier still undergo word-splitting when passed to Vim's terminal command. As a fix, we can convert all single quotes to double quotes.
-    let command = substitute(command, "'", "\"", "g")
-    silent! call term_start(command, {"term_rows": 15, "term_name": "Terminal"})
-    setlocal nobuflisted nonumber
-    " Map , to :q in the opened terminal buffer
-    silent! execute 'nnoremap <silent> <buffer> , :q<CR>'
+    let hasActiveTerminals = <SID>HasActiveTerminals()
+    if (hasActiveTerminals == 1)
+        echohl ErrorMsg
+        echo "Cannot execute command: a terminal is currently active"
+        echohl None
+    else
+        let current = bufnr("%")
+        call <SID>DropAllTerminalBuffers()
+        let command = join(map(split(a:command), 'expand(v:val)'))
+        " For some reason, single-quote escaped strings obtained with the :S filename-modifier still undergo word-splitting when passed to Vim's terminal command. As a fix, we can convert all single quotes to double quotes.
+        let command = substitute(command, "'", "\"", "g")
+        silent! call term_start(command, {"term_rows": 15, "term_name": "Terminal"})
+        " setlocal nobuflisted nonumber
+        setlocal nonumber
+        " Map , to :q in the opened terminal buffer
+        silent! execute 'nnoremap <silent> <buffer> , :q<CR>'
+        " Go back to the previously active window
+        silent! execute current . "wincmd w"
+    endif
+endfunction
+" Utility functions for the above script
+function! <SID>HasActiveTerminals()
+    for n in range(1, bufnr('$'))
+        let type = getbufvar(n, "&buftype")
+        let mod = getbufvar(n, "&modified")
+        if (type == 'terminal' && mod)
+            return 1
+        endif
+    endfor
+endfunction
+function! <SID>DropTerminalBuffer()
+    if (&buftype == 'terminal' && ! &modified)
+        bd
+    endif
+endfunction
+function! <SID>DropAllTerminalBuffers()
+    let current = bufnr("%")
+    exec 'bufdo call <SID>DropTerminalBuffer()'
+    exec 'buffer ' . current
 endfunction
 " ----------------------------------------------------
 " Switch seamlessly between vim windows and tmux panes
@@ -370,6 +407,28 @@ function! <SID>GoToNextWindowOrTmuxPane()
             execute "normal \<c-w>\<c-w>"
         endif
     endif
+endfun
+" -------------------------------------------------------------------------------
+" Choose a file with Ranger and append path relative to the currently edited file
+" -------------------------------------------------------------------------------
+" Based on: https://github.com/francoiscabrol/ranger.vim
+" Not defined with SID as meant to be called in mappings defined in ftplugin files
+function! AppendRelativePathWithRanger()
+    let currentPath = expand("%")
+    let currentDirPath = expand("%:p:h")
+    let tempPath = tempname()
+    silent exec '!ranger --choosefile=' . tempPath . ' "' . currentDirPath . '"'
+    if filereadable(tempPath)
+        for f in readfile(tempPath)
+            let relativeImagePath = substitute(f, currentDirPath . '/', '', 'g')
+            exec "normal! a" . relativeImagePath
+        endfor
+        call delete(tempPath)
+    endif
+    redraw!
+    " reset the filetype to fix the issue that happens
+    " when opening ranger on VimEnter (with `vim .`)
+    filetype detect
 endfun
 
 " Commands {{{1
@@ -503,6 +562,10 @@ nnoremap <silent> <expr> k (v:count == 0 ? ":exe 'normal gk'<CR>" : "k")
 " -----------------------------
 noremap <Left> <c-x>
 noremap <Right> <c-a>
+" ---------------------------------------------------------------
+" Prevent selecting the EOL character when using $ in visual mode
+" ---------------------------------------------------------------
+vnoremap $ $<Left>
 " ----------------------------
 " Easier use of backtick marks
 " ----------------------------
@@ -511,9 +574,6 @@ noremap ' `
 " Enter with , in command-line mode
 " ---------------------------------
 cnoremap , <CR>
-" -------------------------------
-" Enter with , in quickfix buffer
-" -------------------------------
 " ------------------
 " Easier command key
 " ------------------
@@ -561,7 +621,8 @@ noremap ù "+y
 " Define a recursive mapping to use the paste and indent mapping define above
 nmap ¥ "+p
 " Paste in insert mode
-inoremap ¥ <c-o>"+P
+" Uses a trick to fix a problem of incorrect positioning when on the last character of a line: a dummy character 'a' is inserted after the cursor before pasting, so that we are never on the last character, then removed.
+inoremap ¥ a<Esc>i<c-o>"+P<c-o>dl
 " -----------------------
 " Swap lines with A-j A-k
 " -----------------------
@@ -638,6 +699,20 @@ nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 " nmap ga <Plug>(EasyAlign)
+" ------------------
+" Toggle spell check
+" ------------------
+nnoremap zs :setlocal spell!<CR>
+" ---------------------------------
+" Easier insertion of french quotes
+" ---------------------------------
+" Open
+inoremap <expr> è getline(".")[col(".")-2] == " " ? "«" : "è"
+" Open (special case when at the beginning of a line)
+" TODO create a function that merges the two tests
+" inoremap <expr> è col(".") == "1" ? "«" : "è"
+" Close
+inoremap <expr> - matchstr(getline(".")[0:col(".")-2], "«[^»]*$")[0:1] == "«" ? "»" : "-"
 
 " Abbreviations {{{1
 " ==================
@@ -648,5 +723,4 @@ iabbrev todo TODO
 augroup custom_filetype_actions
     autocmd!
     autocmd BufNewFile,BufRead *.pde set ft=java
-    autocmd BufNewFile,BufRead *.md Goyo
 augroup END

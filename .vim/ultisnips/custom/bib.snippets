@@ -1,0 +1,129 @@
+# -----------
+# Web article
+# -----------
+snippet webarticle "Web article"
+@article{$1,
+    author = {$2},
+    title = {$3},
+    year = {$4},
+    journal = {$5},
+    month = {$6},
+    url = {$7},
+    note = {$8},
+    annote = {$9}}
+endsnippet
+
+# -------
+# Article
+# -------
+snippet article "Journal article"
+@article{$1,
+    author = {$2},
+    title = {$3},
+    year = {$4},
+    journal = {$5},
+    volume = {$6},
+    number = {$7},
+    editor = {$8},
+    booktitle = {$9},
+    publisher = {$10},
+    address = {$11},
+    pages = {$12},
+    note = {$13},
+    annote = {$14}}
+endsnippet
+
+snippet logarticle "Log article"
+@article{$1,
+    author = {$2},
+    title = {$3},
+    year = {$4},
+    journal = {Log},
+    volume = {},
+    number = {$7},
+    editor = {Cynthia Davidson},
+    booktitle = {$9},
+    publisher = {Anyone Corporation},
+    address = {New York},
+    pages = {$12},
+    note = {},
+    annote = {$13}}
+endsnippet
+
+# ----
+# Book
+# ----
+snippet book "Book"
+@book{$1,
+    author = {$2},
+    title = {$3},
+    year = {$4},
+    editor = {$5},
+    publisher = {$6},
+    address = {$7},
+    note = {$8},
+    annote = {$9}}
+endsnippet
+
+# -------------
+# Miscellaneous
+# -------------
+snippet misc "Miscellaneous"
+@misc{$1,
+    author = {$2},
+    title = {$3},
+    year = {$4},
+    editor = {\includegraphics{$5}},
+    address = {$6},
+    note = {$7},
+    annote = {$8}}
+endsnippet
+
+# ------------
+# Book chapter
+# ------------
+snippet incollection "Book chapter"
+@incollection{$1,
+    author = {$2},
+    title = {$3},
+    year = {$4},
+    editor = {$5},
+    booktitle = {$6},
+    publisher = {$7},
+    address = {$8},
+    pages = {$9},
+    note = {$10},
+    annote = {$11}}
+endsnippet
+
+# ------------------
+# Conference article
+# ------------------
+snippet inproceedings "Conference article"
+@inproceedings{$1,
+    author = {$2},
+    title = {$3},
+    year = {$4},
+    booktitle = {$5},
+    publisher = {$6},
+    address = {$7},
+    pages = {$8},
+    note = {$9},
+    annote = {$10}}
+endsnippet
+
+# ----------
+# PhD Thesis
+# ----------
+snippet phdthesis "PhD thesis"
+@phdthesis{$1,
+    author = {$2},
+    title = {$3},
+    year = {$4},
+    school = {$5},
+    address = {$6},
+    note = {$7},
+    annote = {$8}}
+endsnippet
+
+# vim:ft=snippets:

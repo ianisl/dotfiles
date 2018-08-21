@@ -27,5 +27,20 @@ alias bat="bat --theme=TwoDark"
 # Use GNU cut
 alias cut="gcut"
 
+# Use GNU tail
+alias tail="gtail"
+
+# Use GNU mktemp
+alias mktemp="gmktemp"
+
 # xxd
 alias xxd="xxd -g 1"
+
+# Translation shortcuts
+alias tee="trans en:en"
+alias tff="trans fr:fr"
+alias tii="trans it:it"
+alias tef="trans en:fr"
+alias tfe="trans fr:en"
+alias tif="trans it:fr"
+alias tfi="trans fr:it"
